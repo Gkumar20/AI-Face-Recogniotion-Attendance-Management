@@ -1,12 +1,13 @@
+import os
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-import mysql.connector
 import cv2
+import numpy as np
 
 
-def Train(root):
+def Face_Recognition(root):
     # configure window
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
@@ -20,7 +21,7 @@ def Train(root):
     style.configure("Header.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Title in the header
-    title_label = Label(header_frame, text="Train Model Using Multiple Face Data", font=("Helvetica", 40, "bold"), bg="white", fg='red')
+    title_label = Label(header_frame, text="Face Recognition System", font=("Helvetica", 40, "bold"), bg="white", fg='brown')
     title_label.pack(pady=20)
 
     # Background box with rounded edges (resembling a shadow)
@@ -38,18 +39,17 @@ def Train(root):
     bg_label.pack()
 
     
-    # Button 
-    Train_btn_image = Image.open("public/train_model.png")
+    # Button
+    Train_btn_image = Image.open("public/face.jpg")
     Train_btn_image = Train_btn_image.resize((300, 300), Image.LANCZOS)
-    Train_btn_photo= ImageTk.PhotoImage(Train_btn_image)
+    Train_btn_photo = ImageTk.PhotoImage(Train_btn_image)
 
-    btn2 = Button(background_box, image=Train_btn_photo, borderwidth=5)
-    btn2.image = Train_btn_photo 
-    btn2.place(x=650,y=200) 
- 
+    btn1 = Button(background_box, image=Train_btn_photo, borderwidth=5)
+    btn1.image = Train_btn_photo 
+    btn1.place(x=600, y=150)
 
 
 if __name__ == "__main__":
     root = Tk()
-    Train(root)
+    Face_Recognition(root)
     root.mainloop()

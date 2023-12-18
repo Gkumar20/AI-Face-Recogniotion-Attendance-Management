@@ -43,7 +43,7 @@ def Student(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("D:/final yr project/Desktop_application/public/background1.png")
+    bg_image = Image.open("public/background1.png")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 

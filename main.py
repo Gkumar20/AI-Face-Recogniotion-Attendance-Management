@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 from student import Student
+from train import Train
+import os
 
 def main(root):
     # configure window
@@ -26,7 +28,7 @@ def main(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("D:/final yr project/Desktop_application/public/background1.png")
+    bg_image = Image.open("public/background1.png")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -36,7 +38,7 @@ def main(root):
 
 
     # Student Information
-    btn_image1 = Image.open("D:/final yr project/Desktop_application/public/register.png")
+    btn_image1 = Image.open("public/register.png")
     btn_image1 = btn_image1.resize((200, 200), Image.LANCZOS)
     btn_photo1 = ImageTk.PhotoImage(btn_image1)
 
@@ -49,7 +51,7 @@ def main(root):
 
 
     # Face Detector 
-    btn_image2 = Image.open("D:/final yr project/Desktop_application/public/profile.jpg")
+    btn_image2 = Image.open("public/profile.jpg")
     btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
     btn_photo2 = ImageTk.PhotoImage(btn_image2)
 
@@ -62,7 +64,7 @@ def main(root):
 
 
     # Student Attendance
-    btn_image3 = Image.open("D:/final yr project/Desktop_application/public/register.png")
+    btn_image3 = Image.open("public/register.png")
     btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
     btn_photo3 = ImageTk.PhotoImage(btn_image3)
 
@@ -75,33 +77,33 @@ def main(root):
 
 
     # Train Data
-    btn_image4 = Image.open("D:/final yr project/Desktop_application/public/admin.png")
+    btn_image4 = Image.open("public/admin.png")
     btn_image4 = btn_image4.resize((200, 200), Image.LANCZOS)
     btn_photo4 = ImageTk.PhotoImage(btn_image4)
 
-    btn4 = Button(background_box, image=btn_photo4, borderwidth=5)
+    btn4 = Button(background_box, image=btn_photo4, borderwidth=5,command=train_data)
     btn4.image = btn_photo4  
     btn4.place(x=1250, y=80) 
 
-    btn4_text = Button(background_box, text="Train Data", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn4_text = Button(background_box, text="Train Data",command=train_data, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn4_text.place(x=1255, y=86)  
 
 
     # Student Photos
-    btn_image1 = Image.open("D:/final yr project/Desktop_application/public/profile.jpg")
+    btn_image1 = Image.open("public/profile.jpg")
     btn_image1 = btn_image1.resize((200, 200), Image.LANCZOS)
     btn_photo1 = ImageTk.PhotoImage(btn_image1)
 
-    btn1 = Button(background_box, image=btn_photo1, borderwidth=5)
+    btn1 = Button(background_box, image=btn_photo1, borderwidth=5,command=open_image)
     btn1.image = btn_photo1  
     btn1.place(x=40, y=380) 
 
-    btn1_text = Button(background_box, text="Student Photos", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn1_text = Button(background_box, text="Student Photos",command=open_image, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn1_text.place(x=45, y=386)  
 
 
     # About Us 
-    btn_image2 = Image.open("D:/final yr project/Desktop_application/public/admin.png")
+    btn_image2 = Image.open("public/admin.png")
     btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
     btn_photo2 = ImageTk.PhotoImage(btn_image2)
 
@@ -114,7 +116,7 @@ def main(root):
 
 
     # Help Contact 
-    btn_image3 = Image.open("D:/final yr project/Desktop_application/public/logo.jpg")
+    btn_image3 = Image.open("public/logo.jpg")
     btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
     btn_photo3 = ImageTk.PhotoImage(btn_image3)
 
@@ -127,7 +129,7 @@ def main(root):
 
 
     # Exit 
-    btn_image4 = Image.open("D:/final yr project/Desktop_application/public/admin.png")
+    btn_image4 = Image.open("public/admin.png")
     btn_image4 = btn_image4.resize((200, 200), Image.LANCZOS)
     btn_photo4 = ImageTk.PhotoImage(btn_image4)
 
@@ -138,10 +140,19 @@ def main(root):
     btn4_text = Button(background_box, text="Exit Application", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn4_text.place(x=1255, y=386)  
 
-# ==================functions=============
+# =============Student Image Open=======
+def open_image():
+    os.startfile("data")
+
+# ==================functions for sgtudent detail=============
 def student_details():
     new_window = Toplevel(root)
     app = Student(new_window)
+
+# ==================functions=============
+def train_data():
+    new_window = Toplevel(root)
+    app = Train(new_window)
   
 
 if __name__ == "__main__":
