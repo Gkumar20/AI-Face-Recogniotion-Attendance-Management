@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from student import Student
 from train import Train
+from face_recognition import Face_Recognition
 import os
 
 def main(root):
@@ -55,11 +56,11 @@ def main(root):
     btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
     btn_photo2 = ImageTk.PhotoImage(btn_image2)
 
-    btn2 = Button(background_box, image=btn_photo2, borderwidth=5)
+    btn2 = Button(background_box, image=btn_photo2, borderwidth=5,command=face_detection)
     btn2.image = btn_photo2 
     btn2.place(x=450, y=80) 
 
-    btn2_text = Button(background_box, text="Face Detector", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn2_text = Button(background_box, text="Face Detector",command=face_detection, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn2_text.place(x=455, y=86)  
 
 
@@ -149,10 +150,15 @@ def student_details():
     new_window = Toplevel(root)
     app = Student(new_window)
 
-# ==================functions=============
+# ==================functions for training=============
 def train_data():
     new_window = Toplevel(root)
     app = Train(new_window)
+
+# ==================functions for detection=============
+def face_detection():
+    new_window = Toplevel(root)
+    app = Face_Recognition(new_window)
   
 
 if __name__ == "__main__":
