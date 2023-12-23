@@ -1,16 +1,22 @@
 from tkinter import *
 from tkinter import ttk
+import tkinter
 from PIL import Image, ImageTk
 from student import Student
 from train import Train
 from face_recognition import Face_Recognition
+from attendance import Attendance
 import os
+from time import strftime
+from datetime import datetime
 
 def main(root):
     # configure window
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
+
+
 
     # Header
     header_frame = ttk.Frame(root, style="Header.TFrame")
@@ -22,6 +28,15 @@ def main(root):
     # Title in the header
     title_label = Label(header_frame, text="Face Recognition System Using AI", font=("Helvetica", 40, "bold"), bg="white", fg='skyblue')
     title_label.pack(pady=20)
+
+    def time():
+        string = strftime('%H:%M:%S %p')
+        lbl.config(text = string)
+        lbl.after(1000,time)
+    
+    lbl = Label(header_frame,font=('times new roman',14,'bold'),background='white',foreground='black')
+    lbl.place(x=10,y=20,width=110,height=50)
+    time()
 
     # Background box with rounded edges (resembling a shadow)
     background_box = ttk.Frame(root, style="Background.TFrame")
@@ -69,11 +84,11 @@ def main(root):
     btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
     btn_photo3 = ImageTk.PhotoImage(btn_image3)
 
-    btn3 = Button(background_box, image=btn_photo3, borderwidth=5)
+    btn3 = Button(background_box, image=btn_photo3, borderwidth=5,command=attendance_report)
     btn3.image = btn_photo3  
     btn3.place(x=850, y=80) 
 
-    btn3_text = Button(background_box, text="Student Attendance", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn3_text = Button(background_box, text="Student Attendance",command=attendance_report, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn3_text.place(x=855, y=86)  
 
 
@@ -134,11 +149,11 @@ def main(root):
     btn_image4 = btn_image4.resize((200, 200), Image.LANCZOS)
     btn_photo4 = ImageTk.PhotoImage(btn_image4)
 
-    btn4 = Button(background_box, image=btn_photo4, borderwidth=5)
+    btn4 = Button(background_box, image=btn_photo4, borderwidth=5,command=lambda:main_exit(root))
     btn4.image = btn_photo4  
     btn4.place(x=1250, y=380) 
 
-    btn4_text = Button(background_box, text="Exit Application", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn4_text = Button(background_box, text="Exit Application",command=lambda:main_exit(root), font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn4_text.place(x=1255, y=386)  
 
 # =============Student Image Open=======
@@ -160,6 +175,25 @@ def face_detection():
     new_window = Toplevel(root)
     app = Face_Recognition(new_window)
   
+# ==================functions for Attendacne Report=============
+def attendance_report():
+    new_window = Toplevel(root)
+    app = Attendance(new_window)
+
+
+# ===========exit========
+def main_exit(root):
+    main_exit = tkinter.messagebox.askyesno("Face Recognition","Are you sure to exit",parent=root)  
+    if main_exit>0:
+        root.destroy()
+    else:
+        return
+
+# Function for resizing the window according to the content
+def resize_window(event=None):
+    root.update_idletasks()
+    root.geometry(f"{root.winfo_reqwidth()}x{root.winfo_reqheight()}")
+
 
 if __name__ == "__main__":
     root = Tk()

@@ -6,6 +6,9 @@ from PIL import Image, ImageTk
 import mysql.connector
 import cv2
 import numpy as np
+from time import strftime
+from datetime import datetime
+
 
 
 def Face_Recognition(root):
@@ -49,6 +52,21 @@ def Face_Recognition(root):
     btn1.image = Recog_btn_photo 
     btn1.place(x=600, y=150)
 
+# ==============functions ================
+
+def mark_attendance(p,r,n,d):
+    with open("attendance.csv","r+",newline="\n") as f:
+        myDataList = f.readlines()
+        name_list = []
+        for line in myDataList:
+            entry = line.split((","))
+            name_list.append(entry[0])
+        if((p not in name_list) and (r not in name_list) and (n not in name_list) and (d not in name_list)):
+            now = datetime.now()
+            d1 = now.strftime("%d/%m/%Y")
+            dtString = now.strftime("%H:%M:%S")
+            f.writelines(f"\n{p},{r},{n},{d},{dtString},{d1},Present")
+
 
 def draw_boundary(img, classifier, scaleFactor, minNeighbours, color, text, clf):
     gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -74,10 +92,16 @@ def draw_boundary(img, classifier, scaleFactor, minNeighbours, color, text, clf)
         d = my_cursor.fetchone()
         d = "+".join(d)
 
+        my_cursor.execute("select PRN from student where PRN=" + str(id))
+        p = my_cursor.fetchone()
+        p = "+".join(p)
+
         if confidence > 77:
+            cv2.putText(img, f"PRN:{p}", (x, y - 75), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
             cv2.putText(img, f"Roll:{r}", (x, y - 55), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
             cv2.putText(img, f"Name:{n}", (x, y - 30), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
             cv2.putText(img, f"Department:{d}", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+            mark_attendance(p,r,n,d)
         else:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
             cv2.putText(img, f"Unknown", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
