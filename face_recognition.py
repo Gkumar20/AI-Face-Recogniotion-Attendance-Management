@@ -115,7 +115,7 @@ def recognize(img, clf, faceCascade):
 
 
 def face_recog():
-    faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+    faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
     clf = cv2.face.LBPHFaceRecognizer_create()
     clf.read("classifier.xml")
 

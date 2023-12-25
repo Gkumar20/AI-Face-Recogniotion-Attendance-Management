@@ -387,73 +387,81 @@ def reset_data():
 
 # =============generate data set and take photo samples=====
 def generate_dataset(root):
-    if var_dep.get() == "Select Department" or var_name.get() == "" or var_PRN.get() == "":
-        messagebox.showerror("Error", "All fields are required", parent=root)
-    else:
-        try:
-            conn = mysql.connector.connect(host="localhost", username="root", password="root", database="facerecognizer")
-            my_cursor = conn.cursor()
-            my_cursor.execute("SELECT * FROM student")
-            myresult = my_cursor.fetchall()
-            curr_PRN = int(var_PRN.get())
-            column_names = [desc[0] for desc in my_cursor.description]
+    update = messagebox.askyesno("Update", "Do you want to take photo sample", parent=root)
+    if update:
+        if var_dep.get() == "Select Department" or var_name.get() == "" or var_PRN.get() == "":
+            messagebox.showerror("Error", "All fields are required", parent=root)
+        else:
+            try:
+                conn = mysql.connector.connect(host="localhost", username="root", password="root", database="facerecognizer")
+                my_cursor = conn.cursor()
+                my_cursor.execute("SELECT * FROM student")
+                myresult = my_cursor.fetchall()
+                curr_PRN = int(var_PRN.get())
+                column_names = [desc[0] for desc in my_cursor.description]
 
-            for row in myresult:
-                row_dict = dict(zip(column_names, row))  
-                prn_value = row_dict['PRN']  
-                if prn_value == curr_PRN:  
-                    my_cursor.execute("UPDATE student SET Dep=%s, Year=%s, Semester=%s, Name=%s, Division=%s, Roll=%s, Gender=%s, Mobile=%s, PhotoSample=%s WHERE PRN=%s", (
-                        var_dep.get(),
-                        var_year.get(),
-                        var_sem.get(),
-                        var_name.get(),
-                        var_div.get(),
-                        var_roll.get(),
-                        var_gender.get(),
-                        var_mobile.get(),
-                        var_radio.get(),
-                        curr_PRN  
-                    ))
-                    
-                    face_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-                    def face_cropped(img):
-                        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                        faces = face_classifier.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-
-                        for (x, y, w, h) in faces:
-                            face_cropped = img[y:y+h, x:x+w]
-                            return face_cropped
+                for row in myresult:
+                    row_dict = dict(zip(column_names, row))  
+                    prn_value = int(row_dict['PRN']) 
 
                     if prn_value == curr_PRN:
-                        cap = cv2.VideoCapture(0)
-                        img_id = 0
-                        while True:
-                            ret, my_frame = cap.read()
-                            if ret:
-                                cropped_face = face_cropped(my_frame)
-                                if cropped_face is not None:
-                                    img_id += 1
-                                    face = cv2.resize(cropped_face, (450, 450))
-                                    face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
-                                    file_name_path = f"data/user.{curr_PRN}.{img_id}.jpg"
-                                    cv2.imwrite(file_name_path, face)
-                                    cv2.putText(face, str(img_id), (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
-                                    cv2.imshow("Cropped Face", face)
-
-                            if cv2.waitKey(1) == 13 or int(img_id) == 100:
-                                break
-                        cap.release()
-                        cv2.destroyAllWindows()
-                        messagebox.showinfo("Result", "Generating Data Sets Completed!!", parent=root)
+                        my_cursor.execute("UPDATE student SET Dep=%s, Year=%s, Semester=%s, Name=%s, Division=%s, Roll=%s, Gender=%s, Mobile=%s, PhotoSample=%s WHERE PRN=%s", (
+                            var_dep.get(),
+                            var_year.get(),
+                            var_sem.get(),
+                            var_name.get(),
+                            var_div.get(),
+                            var_roll.get(),
+                            var_gender.get(),
+                            var_mobile.get(),
+                            var_radio.get(),
+                            curr_PRN  
+                        ))
+                
                         
-            conn.commit()
-            fetch_data()
-            reset_data()            
-            conn.close()
+                        face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+                        def face_cropped(img):
+                            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                            faces = face_classifier.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
-        except Exception as error:
-            messagebox.showinfo("Error", f"Due To: {str(error)}", parent=root)
+                            for (x, y, w, h) in faces:
+                                face_cropped = img[y:y+h, x:x+w]
+                                return face_cropped
 
+                        if prn_value == curr_PRN:
+                            cap = cv2.VideoCapture(0)
+                            img_id = 0
+                            while True:
+                                ret, my_frame = cap.read()
+
+                                if ret:
+                                    cropped_face = face_cropped(my_frame)
+                                    
+                                    if cropped_face is not None:
+                                        img_id += 1
+                                        face = cv2.resize(cropped_face, (450, 450))
+                                        face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+                                        file_name_path = f"data/user.{curr_PRN}.{img_id}.jpg"
+                                        cv2.imwrite(file_name_path, face)
+                                        cv2.putText(face, str(img_id), (50, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 255, 0), 2)
+                                        cv2.imshow("Cropped Face", face)
+
+
+                                if cv2.waitKey(1) == 13 or int(img_id) == 100:
+                                    break
+                            cap.release()
+                            cv2.destroyAllWindows()
+                            messagebox.showinfo("Result", "Generating Data Sets Completed!!", parent=root)
+                            
+                conn.commit()
+                fetch_data()
+                reset_data()            
+                conn.close()
+
+            except Exception as error:
+                messagebox.showinfo("Error", f"Due To: {str(error)}", parent=root)
+    else:
+        return
 
 
 if __name__ == "__main__":

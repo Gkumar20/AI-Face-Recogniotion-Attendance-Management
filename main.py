@@ -6,6 +6,7 @@ from student import Student
 from train import Train
 from face_recognition import Face_Recognition
 from attendance import Attendance
+from about import About
 import os
 from time import strftime
 from datetime import datetime
@@ -123,11 +124,11 @@ def main(root):
     btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
     btn_photo2 = ImageTk.PhotoImage(btn_image2)
 
-    btn2 = Button(background_box, image=btn_photo2, borderwidth=5)
+    btn2 = Button(background_box, image=btn_photo2, borderwidth=5,command=about_us)
     btn2.image = btn_photo2 
     btn2.place(x=450, y=380) 
 
-    btn2_text = Button(background_box, text="About Us", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn2_text = Button(background_box, text="About Team",command=about_us, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn2_text.place(x=455, y=386)  
 
 
@@ -140,7 +141,7 @@ def main(root):
     btn3.image = btn_photo3  
     btn3.place(x=850, y=380) 
 
-    btn3_text = Button(background_box, text="Help Contact", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
+    btn3_text = Button(background_box, text="Help to Working", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
     btn3_text.place(x=855, y=386)  
 
 
@@ -190,10 +191,9 @@ def main_exit(root):
         return
 
 # Function for resizing the window according to the content
-def resize_window(event=None):
-    root.update_idletasks()
-    root.geometry(f"{root.winfo_reqwidth()}x{root.winfo_reqheight()}")
-
+def about_us():
+    new_window = Toplevel(root)
+    app = About(new_window)
 
 if __name__ == "__main__":
     root = Tk()
