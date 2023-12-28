@@ -4,6 +4,8 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import mysql.connector
 import cv2
+import mysql.connector.locales.eng.client_error
+
 
 
 def Student(root):
@@ -11,6 +13,8 @@ def Student(root):
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
+    root.wm_iconbitmap("face.ico")
+
 
     global var_dep, var_year, var_sem, var_PRN, var_name, var_div, var_roll, var_gender, var_mobile, var_radio, student_table
 

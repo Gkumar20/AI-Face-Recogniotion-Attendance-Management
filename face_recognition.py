@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from time import strftime
 from datetime import datetime
+import mysql.connector.locales.eng.client_error
 
 
 
@@ -16,6 +17,7 @@ def Face_Recognition(root):
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
+    root.wm_iconbitmap("face.ico")
 
     # Header
     header_frame = ttk.Frame(root, style="Header.TFrame")
@@ -55,7 +57,7 @@ def Face_Recognition(root):
 # ==============functions ================
 
 def mark_attendance(p,r,n,d):
-    with open("attendance.csv","r+",newline="\n") as f:
+    with open("attendance_report/attendance.csv","r+",newline="\n") as f:
         myDataList = f.readlines()
         name_list = []
         for line in myDataList:
@@ -77,7 +79,7 @@ def draw_boundary(img, classifier, scaleFactor, minNeighbours, color, text, clf)
         id, predict = clf.predict(gray_image[y:y + h, x:x + w])
         confidence = int((100 * (1 - predict / 300)))
 
-        conn = mysql.connector.connect(host="localhost", username="root", password="root", database="facerecognizer")
+        conn = mysql.connector.connect(host="localhost", username="gkumar", password="root", database="facerecognizer")
         my_cursor = conn.cursor()
 
         my_cursor.execute("select Name from student where PRN=" + str(id))

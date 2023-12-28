@@ -15,6 +15,7 @@ def Attendance(root):
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
+    root.wm_iconbitmap("face.ico")
 
     # variavle define 
     global Attendance_report_table,var_atten_attendance,var_atten_date,var_atten_time,var_atten_dep,var_atten_name,var_atten_PRN,var_atten_roll

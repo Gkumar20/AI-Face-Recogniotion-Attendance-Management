@@ -16,6 +16,7 @@ def main(root):
     root.title("Multiple Face Recognition System Using AI")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
+    root.wm_iconbitmap("face.ico")
 
 
 
