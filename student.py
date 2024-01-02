@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 import mysql.connector
 import cv2
 import mysql.connector.locales.eng.client_error
+from db_connection import get_database_connection
+
 
 
 
@@ -251,6 +253,11 @@ def Student(root):
     fetch_data()
 
 
+
+
+
+
+
 # ============functions=============
 
 def add_data(root):
@@ -258,7 +265,7 @@ def add_data(root):
         messagebox.showerror("Error","All fienld are required",parent=root)
     else:
         try:
-            conn=mysql.connector.connect(host="localhost",username="root",password="root",database="facerecognizer")
+            conn = get_database_connection()
             my_cursur = conn.cursor()
             my_cursur.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
                 var_dep.get(),
@@ -283,7 +290,7 @@ def add_data(root):
 # ==========fetch data ==========
 def fetch_data():
     try:
-        conn=mysql.connector.connect(host="localhost",username="root",password="root",database="facerecognizer")
+        conn = get_database_connection()
         my_cursur = conn.cursor()
         my_cursur.execute("select * from student")
         data = my_cursur.fetchall()
@@ -326,7 +333,7 @@ def update_data(root):
         try:
             update = messagebox.askyesno("Update","Do you want update this Student Details",parent=root)
             if update>0:
-                conn=mysql.connector.connect(host="localhost",username="root",password="root",database="facerecognizer")
+                conn = get_database_connection()
                 my_cursur = conn.cursor()
                 my_cursur.execute("update student set Dep=%s,Year=%s,Semester=%s,Name=%s,Division=%s,Roll=%s,Gender=%s,Mobile=%s,PhotoSample=%s where PRN=%s",(
                     var_dep.get(),
@@ -360,7 +367,7 @@ def delete_data(root):
         try:
             delete = messagebox.askyesno("Student Delete Page","Do you want to delete this Student",parent=root)
             if delete>0:
-                conn=mysql.connector.connect(host="localhost",username="root",password="root",database="facerecognizer")
+                conn = get_database_connection()
                 my_cursur = conn.cursor()
                 sql = "delete from student where PRN=%s"
                 val=(var_PRN.get(),)
@@ -373,7 +380,7 @@ def delete_data(root):
             conn.close()
             messagebox.showinfo("Success","Student details has been Deleted Successfully",parent=root)
         except Exception as error:
-            messagebox.showinfo("Error",f"Due To:{str(error)}",parent=root)
+            messagebox.showerror("Error",f"Due To:{str(error)}",parent=root)
 
 # ========reset data =========
 def reset_data():
@@ -397,7 +404,7 @@ def generate_dataset(root):
             messagebox.showerror("Error", "All fields are required", parent=root)
         else:
             try:
-                conn = mysql.connector.connect(host="localhost", username="root", password="root", database="facerecognizer")
+                conn = get_database_connection()
                 my_cursor = conn.cursor()
                 my_cursor.execute("SELECT * FROM student")
                 myresult = my_cursor.fetchall()

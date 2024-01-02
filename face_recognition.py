@@ -9,6 +9,7 @@ import numpy as np
 from time import strftime
 from datetime import datetime
 import mysql.connector.locales.eng.client_error
+from db_connection import get_database_connection
 
 
 
@@ -79,7 +80,7 @@ def draw_boundary(img, classifier, scaleFactor, minNeighbours, color, text, clf)
         id, predict = clf.predict(gray_image[y:y + h, x:x + w])
         confidence = int((100 * (1 - predict / 300)))
 
-        conn = mysql.connector.connect(host="localhost", username="gkumar", password="root", database="facerecognizer")
+        conn = get_database_connection()
         my_cursor = conn.cursor()
 
         my_cursor.execute("select Name from student where PRN=" + str(id))

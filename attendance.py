@@ -7,6 +7,7 @@ import cv2
 import os 
 import csv
 from tkinter import filedialog
+import win32com.client
 
 
 mydata = []
@@ -132,7 +133,7 @@ def Attendance(root):
     Export_button = Button(Buttons_frame,text="Export csv",command=lambda:exportCsv(root),width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="blue",fg="white")
     Export_button.grid(row=0,column=1,padx=5,pady=7)
 
-    Update_button = Button(Buttons_frame,text="Update",width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="brown",fg="white")
+    Update_button = Button(Buttons_frame,text="All Attendance",command=lambda:openCsv(root) ,width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="brown",fg="white")
     Update_button.grid(row=0,column=2,padx=5,pady=7)
 
     Reset_button = Button(Buttons_frame,text="Reset",command=lambda:reset_data(),width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="yellow",fg="black")
@@ -184,26 +185,42 @@ def Attendance(root):
 
 # ============== fetch data functiona============
 def fetchData(rows):
-    Attendance_report_table.delete(*Attendance_report_table.get_children())
-    for i in rows:
-        Attendance_report_table.insert("",END,values=i)
+    try:
+        Attendance_report_table.delete(*Attendance_report_table.get_children())
+        for i in rows:
+            Attendance_report_table.insert("",END,values=i)  
+    except FileNotFoundError:
+        messagebox.showerror("Error", "File not found.", parent=root)
+    except Exception as error:
+        messagebox.showerror("Error", f"Error occurred: {str(error)}", parent=root)
+
 
 
 #import csv
 def importCsv(root):
-    global mydata
-    mydata.clear()
-    fln = filedialog.askopenfilename(
-        initialdir = os.getcwd(),
-        title = "Open CSV",
-        filetypes=(("CSV File","*csv"),("All File","*.*")),
-        parent = root
-    )
-    with open(fln) as myfile:
-        csvread = csv.reader(myfile,delimiter=",")
-        for i in csvread:
-            mydata.append(i)
-        fetchData(mydata)
+    try:
+        global mydata
+        mydata.clear()
+        fln = filedialog.askopenfilename(
+            initialdir=os.path.join(os.getcwd(), "attendance_report"),
+            title="Open CSV",
+            filetypes=(("CSV File", "*.csv"), ("All File", "*.*")),
+            parent=root
+        )
+        if not fln:
+            messagebox.showerror("Error", "No file selected.", parent=root)
+            return
+        
+        with open(fln) as myfile:
+            csvread = csv.reader(myfile, delimiter=",")
+            for i in csvread:
+                mydata.append(i)
+            fetchData(mydata)
+    except FileNotFoundError:
+        messagebox.showerror("Error", "File not found.", parent=root)
+    except Exception as error:
+        messagebox.showerror("Error", f"Error occurred: {str(error)}", parent=root)
+
 
 # export csv file 
 def exportCsv(root):
@@ -212,7 +229,7 @@ def exportCsv(root):
             messagebox.showerror("No Data","No data found to export",parent=root)
             return False
         fln = filedialog.asksaveasfilename(
-            initialdir = os.getcwd(),
+            initialdir=os.path.join(os.getcwd(), "attendance_report"),
             title = "Open CSV",
             filetypes=(("CSV File","*csv"),("All File","*.*")),
             parent = root
@@ -223,14 +240,13 @@ def exportCsv(root):
                 exp_write.writerow(i)
             messagebox.showinfo("Data Export","Your data exported to " + os.path.basename(fln)+" Successfully")
     except Exception as error:
-        messagebox.showinfo("Error",f"Due To:{str(error)}",parent=root)
+        messagebox.showerror("Error",f"Due To:{str(error)}",parent=root)
 
 def get_cursor(event=""):
     cursor_row = Attendance_report_table.focus()
     content = Attendance_report_table.item(cursor_row)
     row = content['values']
-    if row:  # Check if data is not empty
-        # Check if data has sufficient elements before assigning values
+    if row: 
         if len(row) >= 6:
             var_atten_PRN.set(row[0])
             var_atten_roll.set(row[1])
@@ -239,6 +255,19 @@ def get_cursor(event=""):
             var_atten_time.set(row[4])
             var_atten_date.set(row[5])
             var_atten_attendance.set(row[6])
+
+
+
+# =========update attendace======= 
+def openCsv(root):
+    try:
+        os.startfile("attendance_report")
+    except Exception as error:
+        messagebox.showerror("Error",f"Due To:{str(error)}",parent=root)
+
+
+
+
 
 # ========reset data =========
 def reset_data():
