@@ -7,16 +7,17 @@ from train import Train
 from face_recognition import Face_Recognition
 from attendance import Attendance
 from about import About
+from help import Help
 import os
 from time import strftime
 from datetime import datetime
 
 def main(root):
     # configure window
-    root.title("Multiple Face Recognition System Using AI")
+    root.title("Attendance marking system using multiple face recognition system")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
-    root.wm_iconbitmap("face.ico")
+    root.wm_iconbitmap("Desktop_Icon.ico")
 
 
 
@@ -32,7 +33,7 @@ def main(root):
     title_label.pack(pady=20)
 
     def time():
-        string = strftime('%H:%M:%S %p')
+        string = strftime('%I:%M:%S %p')
         lbl.config(text = string)
         lbl.after(1000,time)
     
@@ -46,52 +47,26 @@ def main(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("public/background1.png")
+    bg_image = Image.open("public/background.jpg")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 
     bg_label = Label(background_box, image=bg_photo)
-    bg_label.image = bg_photo  # To prevent the image from being garbage collected
+    bg_label.image = bg_photo  
     bg_label.pack()
 
 
     # Student Information
-    btn_image1 = Image.open("public/register.png")
+    btn_image1 = Image.open("public/register.jpeg")
     btn_image1 = btn_image1.resize((200, 200), Image.LANCZOS)
     btn_photo1 = ImageTk.PhotoImage(btn_image1)
+
+    btn1_text = Button(background_box,command=student_details, text="Student Information", font=("Helvetica", 14, "bold"),bg="skyblue", fg='black',width=17)
+    btn1_text.place(x=40, y=50)  
 
     btn1 = Button(background_box,command=student_details, image=btn_photo1, borderwidth=5)
     btn1.image = btn_photo1  
     btn1.place(x=40, y=80) 
-
-    btn1_text = Button(background_box,command=student_details, text="Student Information", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn1_text.place(x=45, y=86)  
-
-
-    # Face Detector 
-    btn_image2 = Image.open("public/profile.jpg")
-    btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
-    btn_photo2 = ImageTk.PhotoImage(btn_image2)
-
-    btn2 = Button(background_box, image=btn_photo2, borderwidth=5,command=face_detection)
-    btn2.image = btn_photo2 
-    btn2.place(x=450, y=80) 
-
-    btn2_text = Button(background_box, text="Face Detector",command=face_detection, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn2_text.place(x=455, y=86)  
-
-
-    # Student Attendance
-    btn_image3 = Image.open("public/register.png")
-    btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
-    btn_photo3 = ImageTk.PhotoImage(btn_image3)
-
-    btn3 = Button(background_box, image=btn_photo3, borderwidth=5,command=attendance_report)
-    btn3.image = btn_photo3  
-    btn3.place(x=850, y=80) 
-
-    btn3_text = Button(background_box, text="Student Attendance",command=attendance_report, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn3_text.place(x=855, y=86)  
 
 
     # Train Data
@@ -99,64 +74,91 @@ def main(root):
     btn_image4 = btn_image4.resize((200, 200), Image.LANCZOS)
     btn_photo4 = ImageTk.PhotoImage(btn_image4)
 
+    btn4_text = Button(background_box, text="Train Data",command=train_data, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn4_text.place(x=450, y=50)  
+
     btn4 = Button(background_box, image=btn_photo4, borderwidth=5,command=train_data)
     btn4.image = btn_photo4  
-    btn4.place(x=1250, y=80) 
+    btn4.place(x=450, y=80) 
 
-    btn4_text = Button(background_box, text="Train Data",command=train_data, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn4_text.place(x=1255, y=86)  
+
+    # Face Detector 
+    btn_image2 = Image.open("public/face_recog.webp")
+    btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
+    btn_photo2 = ImageTk.PhotoImage(btn_image2)
+
+    btn2_text = Button(background_box, text="Face Detector",command=face_detection, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn2_text.place(x=850, y=50)  
+
+    btn2 = Button(background_box, image=btn_photo2, borderwidth=5,command=face_detection)
+    btn2.image = btn_photo2 
+    btn2.place(x=850, y=80) 
+
+
+    # Student Attendance
+    btn_image3 = Image.open("public/attendance.jpeg")
+    btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
+    btn_photo3 = ImageTk.PhotoImage(btn_image3)
+
+    btn3_text = Button(background_box, text="Student Attendance",command=attendance_report, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn3_text.place(x=1250, y=50)  
+
+    btn3 = Button(background_box, image=btn_photo3, borderwidth=5,command=attendance_report)
+    btn3.image = btn_photo3  
+    btn3.place(x=1250, y=80) 
+
 
 
     # Student Photos
-    btn_image1 = Image.open("public/profile.jpg")
+    btn_image1 = Image.open("public/gallery.jpeg")
     btn_image1 = btn_image1.resize((200, 200), Image.LANCZOS)
     btn_photo1 = ImageTk.PhotoImage(btn_image1)
+
+    btn1_text = Button(background_box, text="Student Photos",command=open_image, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn1_text.place(x=40, y=350)  
 
     btn1 = Button(background_box, image=btn_photo1, borderwidth=5,command=open_image)
     btn1.image = btn_photo1  
     btn1.place(x=40, y=380) 
 
-    btn1_text = Button(background_box, text="Student Photos",command=open_image, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn1_text.place(x=45, y=386)  
-
 
     # About Us 
-    btn_image2 = Image.open("public/admin.png")
+    btn_image2 = Image.open("public/developer.jpeg")
     btn_image2 = btn_image2.resize((200, 200), Image.LANCZOS)
     btn_photo2 = ImageTk.PhotoImage(btn_image2)
+
+    btn2_text = Button(background_box, text="Developers",command=about_us, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn2_text.place(x=450, y=350)  
 
     btn2 = Button(background_box, image=btn_photo2, borderwidth=5,command=about_us)
     btn2.image = btn_photo2 
     btn2.place(x=450, y=380) 
 
-    btn2_text = Button(background_box, text="About Team",command=about_us, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn2_text.place(x=455, y=386)  
-
 
     # Help Contact 
-    btn_image3 = Image.open("public/logo.jpg")
+    btn_image3 = Image.open("public/help.jpeg")
     btn_image3 = btn_image3.resize((200, 200), Image.LANCZOS)
     btn_photo3 = ImageTk.PhotoImage(btn_image3)
 
-    btn3 = Button(background_box, image=btn_photo3, borderwidth=5)
+    btn3_text = Button(background_box, text="Help",command=help_func, font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn3_text.place(x=850, y=350)  
+
+    btn3 = Button(background_box, image=btn_photo3, borderwidth=5,command=help_func)
     btn3.image = btn_photo3  
     btn3.place(x=850, y=380) 
 
-    btn3_text = Button(background_box, text="Help to Working", font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn3_text.place(x=855, y=386)  
-
 
     # Exit 
-    btn_image4 = Image.open("public/admin.png")
+    btn_image4 = Image.open("public/exit.jpeg")
     btn_image4 = btn_image4.resize((200, 200), Image.LANCZOS)
     btn_photo4 = ImageTk.PhotoImage(btn_image4)
+
+    btn4_text = Button(background_box, text="Exit Application",command=lambda:main_exit(root), font=("Helvetica", 14, "bold"), bg="skyblue", fg='black',width=17)
+    btn4_text.place(x=1250, y=350)  
 
     btn4 = Button(background_box, image=btn_photo4, borderwidth=5,command=lambda:main_exit(root))
     btn4.image = btn_photo4  
     btn4.place(x=1250, y=380) 
-
-    btn4_text = Button(background_box, text="Exit Application",command=lambda:main_exit(root), font=("Helvetica", 14, "bold"), bg="skyblue", fg='black')
-    btn4_text.place(x=1255, y=386)  
 
 # =============Student Image Open=======
 def open_image():
@@ -191,10 +193,15 @@ def main_exit(root):
     else:
         return
 
-# Function for resizing the window according to the content
+# about us
 def about_us():
     new_window = Toplevel(root)
     app = About(new_window)
+
+# Help
+def help_func():
+    new_window = Toplevel(root)
+    app = Help(new_window)
 
 if __name__ == "__main__":
     root = Tk()

@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -12,13 +13,13 @@ from db_connection import get_database_connection
 
 def Student(root):
     # configure window
-    root.title("Multiple Face Recognition System Using AI")
+    root.title("Attendance marking system using multiple face recognition system")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
-    root.wm_iconbitmap("face.ico")
+    root.wm_iconbitmap("Desktop_Icon.ico")
 
 
-    global var_dep, var_year, var_sem, var_PRN, var_name, var_div, var_roll, var_gender, var_mobile, var_radio, student_table
+    global var_dep, var_year, var_sem, var_PRN, var_name, var_div, var_roll, var_gender, var_mobile, var_radio, student_table,search_entry,search_combo
 
 
     # ==========varibales=========
@@ -31,6 +32,7 @@ def Student(root):
     var_roll = StringVar()
     var_gender = StringVar()
     var_mobile = StringVar()
+    var_radio = StringVar()
 
     # Header
     header_frame = ttk.Frame(root, style="Header.TFrame")
@@ -49,7 +51,7 @@ def Student(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("public/background1.png")
+    bg_image = Image.open("public/background.jpg")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -148,20 +150,10 @@ def Student(root):
     Gender_combo.current(0)
     Gender_combo.grid(row=2,column=3,padx=2,pady=10,sticky=W)
 
-     # ========================Photo Sample=====================================
-    Photo_sample_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE,text="Student Photo Sample",font=("times new roman",12))
-    Photo_sample_frame.place(x=0,y=360,width=695,height=50)
-
-    var_radio = StringVar()
-    radio_button = ttk.Radiobutton(Photo_sample_frame,text="Take Photo Sample",variable=var_radio,value="Yes")
-    radio_button.grid(row=0,column=0,padx=10,sticky=W)
-
-    radio_button1 = ttk.Radiobutton(Photo_sample_frame,text="No Photo Sample",variable=var_radio,value="No")
-    radio_button1.grid(row=0,column=1,padx=10,sticky=W)
-
+ 
     # ========================Button frame information frame=====================================
     Buttons_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE)
-    Buttons_frame.place(x=0,y=420,width=695,height=50)
+    Buttons_frame.place(x=0,y=360,width=695,height=50)
 
     save_button = Button(Buttons_frame,text="Save",command=lambda: add_data(root),width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="green",fg="white")
     save_button.grid(row=0,column=0,padx=5,pady=7)
@@ -177,13 +169,15 @@ def Student(root):
 
     
     Buttons_frame1 = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE)
-    Buttons_frame1.place(x=0,y=470,width=695,height=50)
+    Buttons_frame1.place(x=0,y=425,width=695,height=105)
 
-    Add_Photo_button = Button(Buttons_frame1,text="TAKE PHOTO SAMPLE",command=lambda: generate_dataset(root),cursor="hand2",width=36,font=("times new roman",12,"bold"),bg="black",fg="white")
-    Add_Photo_button.grid(row=1,column=0,padx=5,pady=7)
+    # Note Label
+    note_label = Label(Buttons_frame1, text="Note: Please save the user before taking  photo sample", font=("times new roman", 12, "bold"), bg="white", fg="red")
+    note_label.grid(row=0, column=0, columnspan=4, pady=5)
 
-    update_Photo_button = Button(Buttons_frame1,text="UPDATE PHOTO SAMPLE",cursor="hand2",width=36,font=("times new roman",12,"bold"),bg="black",fg="white")
-    update_Photo_button.grid(row=1,column=1,padx=5,pady=7)
+    Add_Photo_button = Button(Buttons_frame1,text="TAKE PHOTO SAMPLE",command=lambda: generate_dataset(root),cursor="hand2",width=74,height=2,font=("times new roman",12,"bold"),bg="black",fg="white")
+    Add_Photo_button.grid(row=1,column=0,padx=7,pady=5)
+
 
     # right frame 
     right_frame = LabelFrame(main_frame,bd=2,relief=RIDGE,text="Student Table",font=("times new roman",15,"bold"),fg="blue")
@@ -204,11 +198,18 @@ def Student(root):
     search_entry = ttk.Entry(search_frame,width=20,font=("times new roman",12))
     search_entry.grid(row=0,column=2,padx=6,pady=5,sticky=W)
 
-    search_button = Button(search_frame,text="Search",cursor="hand2",width=10,font=("times new roman",12,"bold"),bg="black",fg="white")
-    search_button.grid(row=0,column=3,padx=6,pady=5,sticky=W)
+    # Creating the search_button
+    search_button = Button(search_frame, text="Search", cursor="hand2", width=10, font=("times new roman", 12, "bold"), bg="black", fg="white")
+    search_button.grid(row=0, column=3, padx=6, pady=5, sticky=W)
 
-    showAll_button = Button(search_frame,text="Show All",cursor="hand2",width=10,font=("times new roman",12,"bold"),bg="black",fg="white")
-    showAll_button.grid(row=0,column=5,padx=6,pady=5,sticky=W)
+    # Creating the showAll_button
+    showAll_button = Button(search_frame, text="Show All", cursor="hand2", width=10, font=("times new roman", 12, "bold"), bg="black", fg="white")
+    showAll_button.grid(row=0, column=5, padx=6, pady=5, sticky=W)
+
+    # Binding the functions to the buttons
+    search_button.config(command=search_student)
+    showAll_button.config(command=show_all_students)
+
 
 
     # =========================Table=======================
@@ -234,7 +235,7 @@ def Student(root):
     student_table.heading("Roll",text="Roll No.")
     student_table.heading("Gender",text="Gender")
     student_table.heading("Mobile",text="Mobile")
-    student_table.heading("Photo",text="Photo")
+    student_table.heading("Photo",text="Photo Taken")
     student_table["show"] = "headings"
 
     student_table.column("Dep",width=100)
@@ -259,33 +260,6 @@ def Student(root):
 
 
 # ============functions=============
-
-def add_data(root):
-    if var_dep.get()=="Select Department" or var_name.get() == "" or var_PRN.get() == "":
-        messagebox.showerror("Error","All fienld are required",parent=root)
-    else:
-        try:
-            conn = get_database_connection()
-            my_cursur = conn.cursor()
-            my_cursur.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
-                var_dep.get(),
-                var_year.get(),
-                var_sem.get(),
-                var_PRN.get(),
-                var_name.get(),
-                var_div.get(),
-                var_roll.get(),
-                var_gender.get(),
-                var_mobile.get(),
-                var_radio.get()
-            ))
-            conn.commit()
-            fetch_data()
-            conn.close()
-            messagebox.showinfo("Success","Student details has been added Successfully",parent=root)
-            
-        except Exception as error:
-            messagebox.showinfo("Error",f"Due To:{str(error)}",parent=root)
 
 # ==========fetch data ==========
 def fetch_data():
@@ -325,17 +299,53 @@ def get_cursor(event=""):
             var_radio.set(data[9])
 
 
-# =========update data ============
-def update_data(root):
+# =========add data ============
+def add_data(root):
     if var_dep.get()=="Select Department" or var_name.get() == "" or var_PRN.get() == "":
-        messagebox.showerror("Error","All fienld are required",parent=root)
+        messagebox.showerror("Error","All fields are required",parent=root)
     else:
         try:
-            update = messagebox.askyesno("Update","Do you want update this Student Details",parent=root)
-            if update>0:
+            conn = get_database_connection()
+            my_cursor = conn.cursor()
+            my_cursor.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+                var_dep.get(),
+                var_year.get(),
+                var_sem.get(),
+                var_PRN.get(),
+                var_name.get(),
+                var_div.get(),
+                var_roll.get(),
+                var_gender.get(),
+                var_mobile.get(),
+                "No"  # Default value for var_radio set to "No"
+            ))
+            conn.commit()
+            fetch_data()
+            conn.close()
+            messagebox.showinfo("Success","Student details have been added successfully",parent=root)
+            
+        except Exception as error:
+            messagebox.showinfo("Error",f"Due To:{str(error)}",parent=root)
+
+
+#========= update data =========
+def update_data(root):
+    if var_dep.get()=="Select Department" or var_name.get() == "" or var_PRN.get() == "":
+        messagebox.showerror("Error","All fields are required",parent=root)
+    else:
+        try:
+            update = messagebox.askyesno("Update","Do you want to update this Student Details",parent=root)
+            if update > 0:
                 conn = get_database_connection()
-                my_cursur = conn.cursor()
-                my_cursur.execute("update student set Dep=%s,Year=%s,Semester=%s,Name=%s,Division=%s,Roll=%s,Gender=%s,Mobile=%s,PhotoSample=%s where PRN=%s",(
+                my_cursor = conn.cursor()
+                
+                # If a photo sample is taken, update var_radio to "Yes"
+                if var_radio.get() == "Yes":
+                    radio_value = "Yes"
+                else:
+                    radio_value = "No"
+                    
+                my_cursor.execute("update student set Dep=%s,Year=%s,Semester=%s,Name=%s,Division=%s,Roll=%s,Gender=%s,Mobile=%s,PhotoSample=%s where PRN=%s",(
                     var_dep.get(),
                     var_year.get(),
                     var_sem.get(),
@@ -344,43 +354,53 @@ def update_data(root):
                     var_roll.get(),
                     var_gender.get(),
                     var_mobile.get(),
-                    var_radio.get(),
+                    radio_value,
                     var_PRN.get()
                 ))
+                
+                conn.commit()
+                fetch_data()
+                conn.close()
+                messagebox.showinfo("Success","Student details have been updated successfully",parent=root)
+                
             else:
                 if not update:
                     return
-            messagebox.showinfo("Success","Student details has been Updated Successfully",parent=root)
-            conn.commit()
-            fetch_data()
-            conn.close()
-        
         except Exception as error:
             messagebox.showinfo("Error",f"Due To:{str(error)}",parent=root)
 
 
 # ======Delete data ========
 def delete_data(root):
-    if var_PRN.get()=="":
-        messagebox.showerror("Error","Student PRN must be required",parent=root)
+    if var_PRN.get() == "":
+        messagebox.showerror("Error", "Student PRN must be required", parent=root)
     else:
         try:
-            delete = messagebox.askyesno("Student Delete Page","Do you want to delete this Student",parent=root)
-            if delete>0:
+            delete = messagebox.askyesno("Student Delete Page", "Do you want to delete this Student", parent=root)
+            if delete > 0:
                 conn = get_database_connection()
-                my_cursur = conn.cursor()
-                sql = "delete from student where PRN=%s"
-                val=(var_PRN.get(),)
-                my_cursur.execute(sql,val)
-            else:
-                if not delete:
-                    return
-            conn.commit()
-            fetch_data()
-            conn.close()
-            messagebox.showinfo("Success","Student details has been Deleted Successfully",parent=root)
+                my_cursor = conn.cursor()
+                # Fetching the user's data before deletion
+                my_cursor.execute("SELECT * FROM student WHERE PRN=%s", (var_PRN.get(),))
+                data = my_cursor.fetchone()
+                if data:
+                   if data[9] == "Yes":  
+                        prn_value = int(var_PRN.get())
+                        for img_id in range(1, 101):  
+                            file_path = f"data/user.{prn_value}.{img_id}.jpg"
+                            try:
+                                os.remove(file_path)
+                            except FileNotFoundError:
+                                pass  # Skip if the file doesn't exist
+                sql = "DELETE FROM student WHERE PRN=%s"
+                val = (var_PRN.get(),)
+                my_cursor.execute(sql, val)
+                conn.commit()
+                fetch_data()
+                conn.close()
+                messagebox.showinfo("Success", "Student details have been Deleted Successfully", parent=root)
         except Exception as error:
-            messagebox.showerror("Error",f"Due To:{str(error)}",parent=root)
+            messagebox.showerror("Error", f"Due To: {str(error)}", parent=root)
 
 # ========reset data =========
 def reset_data():
@@ -396,26 +416,29 @@ def reset_data():
     var_radio.set("")
 
 
+
 # =============generate data set and take photo samples=====
 def generate_dataset(root):
-    update = messagebox.askyesno("Update", "Do you want to take photo sample", parent=root)
-    if update:
-        if var_dep.get() == "Select Department" or var_name.get() == "" or var_PRN.get() == "":
-            messagebox.showerror("Error", "All fields are required", parent=root)
-        else:
-            try:
-                conn = get_database_connection()
-                my_cursor = conn.cursor()
-                my_cursor.execute("SELECT * FROM student")
-                myresult = my_cursor.fetchall()
-                curr_PRN = int(var_PRN.get())
-                column_names = [desc[0] for desc in my_cursor.description]
+    if var_dep.get() == "Select Department" or var_name.get() == "" or var_PRN.get() == "":
+        messagebox.showerror("Error", "Please fill all the required fields before taking a photo sample", parent=root)
+    else:
+        try:
+            conn = get_database_connection()
+            my_cursor = conn.cursor()
+            my_cursor.execute("SELECT * FROM student WHERE PRN=%s", (var_PRN.get(),))
+            user_data = my_cursor.fetchone()
 
-                for row in myresult:
-                    row_dict = dict(zip(column_names, row))  
-                    prn_value = int(row_dict['PRN']) 
+            if user_data:
+                update = messagebox.askyesno("Update", "Do you want to take photo sample", parent=root)
+                if update:
+                    curr_PRN = int(var_PRN.get())
 
+                    prn_value = int(user_data[3])
+                    
                     if prn_value == curr_PRN:
+                        var_radio.set("Yes")
+
+                        # Updating the database with new values
                         my_cursor.execute("UPDATE student SET Dep=%s, Year=%s, Semester=%s, Name=%s, Division=%s, Roll=%s, Gender=%s, Mobile=%s, PhotoSample=%s WHERE PRN=%s", (
                             var_dep.get(),
                             var_year.get(),
@@ -426,10 +449,9 @@ def generate_dataset(root):
                             var_gender.get(),
                             var_mobile.get(),
                             var_radio.get(),
-                            curr_PRN  
+                            curr_PRN
                         ))
-                
-                        
+
                         face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
                         def face_cropped(img):
                             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -463,16 +485,63 @@ def generate_dataset(root):
                             cap.release()
                             cv2.destroyAllWindows()
                             messagebox.showinfo("Result", "Generating Data Sets Completed!!", parent=root)
-                            
-                conn.commit()
-                fetch_data()
-                reset_data()            
-                conn.close()
+                        
+                    conn.commit()
+                    fetch_data()
+                    reset_data()            
+                    conn.close()
+                else:
+                    return
+            else:
+                messagebox.showerror("Error", "Please save the user before taking a photo sample", parent=root)
 
-            except Exception as error:
-                messagebox.showinfo("Error", f"Due To: {str(error)}", parent=root)
-    else:
-        return
+        except Exception as error:
+            messagebox.showinfo("Error", f"Due To: {str(error)}", parent=root)
+
+# Function to search for a specific student
+def search_student():
+    search_by = search_combo.get()
+    search_text = search_entry.get()
+    try:
+        conn = get_database_connection()
+        my_cursor = conn.cursor()
+        if search_by == "PRN":
+            my_cursor.execute("SELECT * FROM student WHERE PRN=%s", (search_text,))
+        elif search_by == "Roll No.":
+            my_cursor.execute("SELECT * FROM student WHERE Roll=%s", (search_text,))
+        else:
+            messagebox.showerror("Error", "Please select a valid search category.")
+            return
+
+        data = my_cursor.fetchall()
+        if data:
+            student_table.delete(*student_table.get_children())
+            for row in data:
+                student_table.insert("", END, values=row)
+        else:
+            messagebox.showinfo("Not Found", "No matching records found.")
+        conn.close()
+    except Exception as error:
+        messagebox.showerror("Error", f"Search error: {str(error)}")
+
+# Function to show all students
+def show_all_students():
+    try:
+        conn = get_database_connection()
+        my_cursor = conn.cursor()
+        my_cursor.execute("SELECT * FROM student")
+        data = my_cursor.fetchall()
+        if data:
+            student_table.delete(*student_table.get_children())
+            for row in data:
+                student_table.insert("", END, values=row)
+        else:
+            messagebox.showinfo("Empty", "No records found.")
+        conn.close()
+    except Exception as error:
+        messagebox.showerror("Error", f"Error in fetching data: {str(error)}")
+
+
 
 
 if __name__ == "__main__":

@@ -8,10 +8,10 @@ import cv2
 
 def About(root):
     # configure window
-    root.title("Multiple Face Recognition System Using AI")
+    root.title("Attendance marking system using multiple face recognition system")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
-    root.wm_iconbitmap("face.ico")
+    root.wm_iconbitmap("Desktop_Icon.ico")
 
 
     # Header
@@ -22,7 +22,7 @@ def About(root):
     style.configure("Header.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Title in the header
-    title_label = Label(header_frame, text="About Project", font=("Helvetica", 40, "bold"), bg="white", fg='green')
+    title_label = Label(header_frame, text="About Us", font=("Helvetica", 40, "bold"), bg="white", fg='green')
     title_label.pack(pady=20)
 
     # Background box with rounded edges (resembling a shadow)
@@ -31,7 +31,7 @@ def About(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("public/background1.png")
+    bg_image = Image.open("public/background.jpg")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -62,7 +62,7 @@ def About(root):
     teacher_name_label.place(relx=0.5, rely=0.15, anchor="center")  # Positioned in the center horizontally
 
     # Project Description
-    project_label = Label(top_frame, text="Final Year Project Multiple Face Recognition using AI", font=("times new roman", 18), fg="black")
+    project_label = Label(top_frame, text="Final Year Project: Attendance marking system using multiple face recognition system", font=("times new roman", 18), fg="black")
     project_label.place(relx=0.5, rely=0.35, anchor="center")  # Positioned in the center horizontally
 
     # Guidance Note
@@ -92,7 +92,7 @@ def About(root):
     student1_name_label.place(relx=0.5, rely=0.5, anchor="center")
 
     # Student 1's details
-    student1_details_label = Label(left_frame, text="Electronics and Telecommunication\nContact: +1234567890\nEmail: ganesh@example.com", font=("times new roman", 14), fg="black")
+    student1_details_label = Label(left_frame, text="Electronics and Telecommunication\nContact: +917322902755\nEmail: gkumar20-etc@bvucoep.edu.in", font=("times new roman", 14), fg="black")
     student1_details_label.place(relx=0.5, rely=0.75, anchor="center")
 
     # Middle Frame - Student 2 Details
@@ -114,7 +114,7 @@ def About(root):
     student2_name_label.place(relx=0.5, rely=0.5, anchor="center")
 
     # Student 2's details
-    student2_details_label = Label(mid_frame, text="Electronics and Telecommunication\nContact: +9876543210\nEmail: mukesh@example.com", font=("times new roman", 14), fg="black")
+    student2_details_label = Label(mid_frame, text="Electronics and Telecommunication\nContact: +917462955309\nEmail: mkmukhiya20-etc@bvucoep.edu.in", font=("times new roman", 14), fg="black")
     student2_details_label.place(relx=0.5, rely=0.75, anchor="center")
 
     # Right Frame - Student 3 Details
@@ -136,7 +136,7 @@ def About(root):
     student3_name_label.place(relx=0.5, rely=0.5, anchor="center")
 
     # Student 3's details
-    student3_details_label = Label(right_frame, text="Electronics and Telecommunication\nContact: +9876543210\nEmail: shubham@example.com", font=("times new roman", 14), fg="black")
+    student3_details_label = Label(right_frame, text="Electronics and Telecommunication\nContact: +918446221701\nEmail: skverma20-etc@bvucoep.edu.in", font=("times new roman", 14), fg="black")
     student3_details_label.place(relx=0.5, rely=0.75, anchor="center")
 
 if __name__ == "__main__":

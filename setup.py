@@ -15,7 +15,17 @@ executables = [cx_Freeze.Executable("main.py", base=base, icon="face.ico")]
 
 cx_Freeze.setup(
     name = "Multiple Face Recognition Software",
-    options = {"build_exe": {"packages":["tkinter","os"], "include_files":["face.ico",'tcl86t.dll','tk86t.dll', 'public','data','database','attendance_report']}},
+    options = {"build_exe": {"packages": ["tkinter", "os"],"include_files": [
+            "Desktop_Icon.ico",
+            "tcl86t.dll",
+            "tk86t.dll",
+            "public",
+            "data",
+            "database",
+            "attendance_report",
+            "__pycache__" 
+            ]}
+        }
     version = "1.0",
     description = "Multiple Face Recognition Automatic Attendace System | Developed By Ganesh Kumar",
     executables = executables

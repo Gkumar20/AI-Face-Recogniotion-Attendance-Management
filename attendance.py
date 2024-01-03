@@ -13,10 +13,10 @@ import win32com.client
 mydata = []
 def Attendance(root):
     # configure window
-    root.title("Multiple Face Recognition System Using AI")
+    root.title("Attendance marking system using multiple face recognition system")
     root.configure(background="gray")
     root.geometry("1520x780+0+0")
-    root.wm_iconbitmap("face.ico")
+    root.wm_iconbitmap("Desktop_Icon.ico")
 
     # variavle define 
     global Attendance_report_table,var_atten_attendance,var_atten_date,var_atten_time,var_atten_dep,var_atten_name,var_atten_PRN,var_atten_roll
@@ -38,7 +38,7 @@ def Attendance(root):
     style.configure("Header.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Title in the header
-    title_label = Label(header_frame, text="Student Attendance & Data Details", font=("Helvetica", 40, "bold"), bg="white", fg='green')
+    title_label = Label(header_frame, text="Student Attendance reports & Details", font=("Helvetica", 40, "bold"), bg="white", fg='green')
     title_label.pack(pady=20)
 
     # Background box with rounded edges (resembling a shadow)
@@ -47,7 +47,7 @@ def Attendance(root):
     style.configure("Background.TFrame", background="white", borderwidth=5, relief="groove", borderradius=10)
 
     # Background image inside the box
-    bg_image = Image.open("public/background1.png")
+    bg_image = Image.open("public/background.jpg")
     bg_image = bg_image.resize((1500, 660), Image.LANCZOS)
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -139,7 +139,18 @@ def Attendance(root):
     Reset_button = Button(Buttons_frame,text="Reset",command=lambda:reset_data(),width=17,cursor="hand2" ,font=("times new roman",12,"bold"),bg="yellow",fg="black")
     Reset_button.grid(row=0,column=3,padx=5,pady=7)
 
+    # ========================Button frame information frame=====================================
+    Image_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE)
+    Image_frame.place(x=0,y=280,width=695,height=250)
 
+    # Background image left box
+    bg_image = Image.open("public/face_bg.jpg")
+    bg_image = bg_image.resize((695, 250), Image.LANCZOS)
+    bg_photo = ImageTk.PhotoImage(bg_image)
+
+    bg_label = Label(Image_frame, image=bg_photo)
+    bg_label.image = bg_photo  
+    bg_label.pack()
 
     # right frame 
     right_frame = LabelFrame(main_frame,bd=2,relief=RIDGE,text="Student Table",font=("times new roman",15,"bold"),fg="blue")
