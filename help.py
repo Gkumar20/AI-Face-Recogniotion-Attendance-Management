@@ -1,6 +1,14 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
+import openai
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+api_key = config.get('OpenAI', 'API_KEY')
+openai.api_key = api_key
 
 def Help(root):
     root.title("Attendance marking system using multiple face recognition system")
@@ -40,24 +48,30 @@ def Help(root):
     section_title = Label(main_frame, text="Welcome to Help Section", font=("Helvetica", 20, "bold"), bg="white", fg="#3498db")
     section_title.pack(pady=20)
 
-    # Section 1 - Instructions
-    instructions_label = Label(main_frame, text="Instructions:", font=("Helvetica", 16, "bold"), bg="white", fg="#333")
-    instructions_label.pack(pady=10, anchor=W)
-
-    instructions_text = Text(main_frame, wrap=WORD, font=("Helvetica", 12), height=6, width=60)
-    instructions_text.insert(END, "1. Capture an image or use a camera for facial recognition.\n\n2. Wait for the system to detect and identify faces.\n\n3. Review the attendance details and save if necessary.")
-    instructions_text.config(state=DISABLED)
-    instructions_text.pack(pady=10, padx=10)
 
     # Section 2 - Process
-    process_label = Label(main_frame, text="Process:", font=("Helvetica", 16, "bold"), bg="white", fg="#333")
-    process_label.pack(pady=10, anchor=W)
 
-    process_text = Text(main_frame, wrap=WORD, font=("Helvetica", 12), height=6, width=60)
+    process_text = Text(main_frame, wrap=WORD, font=("Helvetica", 10), height=10, width=70)
     process_text.insert(END, "1. Start the system.\n\n2. Register and Gather the Students Details\n\n3. Make Sure that the every student have their respective images.\n\n4. Train the Model.\n\n5. Start Recognition and Mark Attendance.\n\n6. Review attendance logs.")
-    process_text.config(state=DISABLED)
-    process_text.pack(pady=10, padx=10)
+    process_text.place(x=0,y=50)
 
+    # Chat frame
+ 
+
+    chat_frame = LabelFrame(root, text='ChatBot To Improve Your Q&A', bd=2, bg="white", relief=RIDGE, font=("times new roman", 15,"bold"), fg="red")
+    chat_frame.place(x=30, y=370, width=590, height=360)
+
+    chat_log = Text(chat_frame, wrap=WORD, font=("Helvetica", 10), height=15, width=70)
+    chat_log.pack(padx=10, pady=10)
+
+    user_input = Entry(chat_frame, width=50,fg="green")
+    user_input.pack(pady=5)
+    user_input.bind("<Return>", lambda event: send_message(user_input, chat_log, event))
+
+    send_button = Button(chat_frame, text="Send", command=lambda: send_message(user_input, chat_log),cursor="hand2", width=10, font=("times new roman", 12, "bold"), bg="black", fg="white")
+    send_button.pack()
+
+    
 
     # section 3     
     video_canvas = Canvas(background_box, bg="black")
@@ -79,6 +93,27 @@ def Help(root):
         root.after(2000, lambda: update_video_frame((idx + 1) % len(video_photo_list)))
 
     update_video_frame(0)
+
+def send_message(user_input, chat_log, event=None):
+    message = user_input.get()
+    chat_log.config(state=NORMAL)
+    chat_log.tag_config("user", foreground="blue")  
+    chat_log.tag_config("bot", foreground="red", background="yellow") 
+
+    chat_log.insert(END, "You: " + message + "\n", "user")
+    
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=message,
+        max_tokens=150  
+    )
+    
+    ai_reply = response.choices[0].text.strip()
+    chat_log.insert(END, "ChatBot: " + ai_reply + "\n", "bot")
+    chat_log.config(state=DISABLED)
+    
+    user_input.delete(0, END)
+
 
 
 if __name__ == "__main__":

@@ -1,35 +1,39 @@
-import cx_Freeze
+
 import sys
-import os 
+from cx_Freeze import setup, Executable
 
 base = None
-
-if sys.platform == 'win32':
+if sys.platform == "win32":
     base = "Win32GUI"
 
-os.environ['TCL_LIBRARY'] = r"C:\Users\gkumar\AppData\Local\Programs\Python\Python311\tcl\tcl8.6"
-os.environ['TK_LIBRARY'] = r"C:\Users\gkumar\AppData\Local\Programs\Python\Python311\tcl\tk8.6"
+executables = [Executable("main.py", base=base, icon="Desktop_Icon.ico")]
 
-executables = [cx_Freeze.Executable("main.py", base=base, icon="Desktop_Icon.ico")]
+includefiles = [
+    "Desktop_Icon.ico",
+    "tcl86t.dll",
+    "tk86t.dll",
+    "config.ini",
+    "public",
+    "data",
+    "attendance_report",
+    "classifier.xml",
+    "haarcascade_frontalface_default.xml",
+    "database"
+]
 
-cx_Freeze.setup(
+options = {
+    "build_exe": {
+        "packages": ["tkinter"],
+        "include_files": includefiles,
+        "excludes": ["__pycache__"],  
+    }
+}
+
+
+setup(
     name="Attendance marking using multiple face recognition Software",
-    options={
-        "build_exe": {
-            "packages": ["tkinter", "os"],
-            "include_files": [
-                "Desktop_Icon.ico",
-                "tcl86t.dll",
-                "tk86t.dll",
-                "config.ini",
-                "public",
-                "data",
-                "database",
-                "attendance_report"
-            ]
-        }
-    },
     version="1.0",
     description="Attendance marking system using multiple face recognition system | Developed By Ganesh Kumar",
+    options=options,
     executables=executables
 )
