@@ -212,6 +212,20 @@ def display_csv_files():
         selected_file = file_list[selected_index[0]] if selected_index else ""
         selected_file_label.config(text=f"Selected File: {selected_file}")
 
+        # Check if the selection is valid and then proceed
+        if selected_index:
+            
+            selected_item_text = listbox.get(selected_index)
+            
+            selected_filename = selected_item_text.split(". ")[1]
+
+            
+            selected_file = selected_filename
+            selected_file_label.config(text=f"Selected File: {selected_filename}")
+        else:
+            selected_file = ""  
+
+
     listbox.bind('<<ListboxSelect>>', on_select)
 
 
@@ -243,10 +257,12 @@ def create_csv_file(root):
         # Concatenate all variables to create the CSV file name
         csv_file_name = f"{var_dep.get()}_{var_year.get()}_{var_sem.get()}_{var_div.get()}_{var_faculty.get()}_{var_subject.get()}_{var_date.get()}_{var_time.get()}.csv"
 
-        with open(f"attendance_report/{csv_file_name}", "w", newline="\n") as f:
-            pass  # Creates an empty file
-
-        messagebox.showinfo("Success", f"{csv_file_name} created successfully!",parent=root)
+        try:
+            with open(f"attendance_report/{csv_file_name}", "w", newline="\n") as f:
+                pass  
+            messagebox.showinfo("Success", f"{csv_file_name} created successfully!", parent=root)
+        except Exception as e:
+            messagebox.showerror("Error", f"Error creating file: {e}", parent=root)
     else:
         messagebox.showerror("Error", "All fields are required!",parent=root)
 
@@ -254,54 +270,76 @@ def create_csv_file(root):
 # ==============Mark attendance functions ================
 
 def mark_attendance(p, r, n, d, selected_file):
-    with open(f"attendance_report/{selected_file}", "r+", newline="\n") as f:
-        myDataList = f.readlines()
-        name_list = [entry.split(",")[0] for entry in myDataList]
-        if (p not in name_list) and (r not in name_list) and (n not in name_list) and (d not in name_list):
-            now = datetime.now()
-            d1 = now.strftime("%d/%m/%Y")
-            dtString = now.strftime("%H:%M:%S")
-            f.writelines(f"\n{p},{r},{n},{d},{dtString},{d1},Present")
+    try:
+        with open(f"attendance_report/{selected_file}", "r+", newline="\n") as f:
+            myDataList = f.readlines()
+            name_list = [entry.split(",")[0] for entry in myDataList]
+            if (p not in name_list) and (r not in name_list) and (n not in name_list) and (d not in name_list):
+                now = datetime.now()
+                d1 = now.strftime("%d/%m/%Y")
+                dtString = now.strftime("%H:%M:%S")
+                f.writelines(f"\n{p},{r},{n},{d},{dtString},{d1},Present")
+    except FileNotFoundError:
+        messagebox.showerror("File Error", f"File '{selected_file}' not found!", parent=root)
+    except Exception as e:
+        messagebox.showerror("Error", f"Error marking attendance: {e}", parent=root)
+
 
 # make frame 
 def draw_boundary(img, classifier, scaleFactor, minNeighbours, color, text, clf):
-    gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    features = classifier.detectMultiScale(gray_image, scaleFactor, minNeighbours)
+    try:
+        gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        features = classifier.detectMultiScale(gray_image, scaleFactor, minNeighbours)
 
-    for (x, y, w, h) in features:
-        cv2.rectangle(img, (x, y), (x + w, y + h), color, 3)
-        id, predict = clf.predict(gray_image[y:y + h, x:x + w])
-        confidence = int((100 * (1 - predict / 300)))
+        for (x, y, w, h) in features:
+            cv2.rectangle(img, (x, y), (x + w, y + h), color, 3)
+            id, predict = clf.predict(gray_image[y:y + h, x:x + w])
+            confidence = int((100 * (1 - predict / 300)))
 
-        conn = get_database_connection()
-        my_cursor = conn.cursor()
+            conn = get_database_connection()
+            my_cursor = conn.cursor()
 
-        my_cursor.execute("select Name from student where PRN=" + str(id))
-        n = my_cursor.fetchone()
-        n = "+".join(n)
+            my_cursor.execute("select Name from student where PRN=" + str(id))
+            n = my_cursor.fetchone()
+            if n:  
+                n = "+".join(n)
+            else:
+                n = ""  
 
-        my_cursor.execute("select Roll from student where PRN=" + str(id))
-        r = my_cursor.fetchone()
-        r = "+".join(r)
+            my_cursor.execute("select Roll from student where PRN=" + str(id))
+            r = my_cursor.fetchone()
+            if r:  
+                r = "+".join(r)
+            else:
+                r = ""  
+            my_cursor.execute("select Dep from student where PRN=" + str(id))
+            d = my_cursor.fetchone()
+            if d:  
+                d = "+".join(d)
+            else:
+                d = ""  
 
-        my_cursor.execute("select Dep from student where PRN=" + str(id))
-        d = my_cursor.fetchone()
-        d = "+".join(d)
+            my_cursor.execute("select PRN from student where PRN=" + str(id))
+            p = my_cursor.fetchone()
+            if p:  
+                p = "+".join(p)
+            else:
+                p = ""  
 
-        my_cursor.execute("select PRN from student where PRN=" + str(id))
-        p = my_cursor.fetchone()
-        p = "+".join(p)
+            if confidence > 77:
+                cv2.putText(img, f"PRN:{p}", (x, y - 75), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+                cv2.putText(img, f"Roll:{r}", (x, y - 55), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+                cv2.putText(img, f"Name:{n}", (x, y - 30), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+                cv2.putText(img, f"Department:{d}", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+                if p and r and n and d: 
+                    mark_attendance(p, r, n, d, selected_file)
+            else:
+                cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
+                cv2.putText(img, f"Unknown", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
+        return img
+    except Exception as e:
+        messagebox.showerror("Error", f"Error in boundary drawing: {e}", parent=root)
 
-        if confidence > 77:
-            cv2.putText(img, f"PRN:{p}", (x, y - 75), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
-            cv2.putText(img, f"Roll:{r}", (x, y - 55), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
-            cv2.putText(img, f"Name:{n}", (x, y - 30), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
-            cv2.putText(img, f"Department:{d}", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
-            mark_attendance(p, r, n, d, selected_file)
-        else:
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
-            cv2.putText(img, f"Unknown", (x, y - 5), cv2.FONT_HERSHEY_COMPLEX, 0.8, (255, 255, 255), 3)
-    return img
 
 # Function for countdown timer
 def countdown_timer():
@@ -321,33 +359,42 @@ selected_file=""
 def face_recog(root):
     global selected_file
     if selected_file:
-        faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+        faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         clf = cv2.face.LBPHFaceRecognizer_create()
         clf.read("classifier.xml")
 
         video_cap = cv2.VideoCapture(0)
 
-        start_time = time.time()
-        while True:
-            ret, img = video_cap.read()
-            if ret:
-                img = recognize(img, clf, faceCascade)
-                elapsed_time = int(time.time() - start_time)
-                remaining_time = max(0, 20 - elapsed_time) 
-                cv2.putText(img, f"Time Left: {remaining_time}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-                cv2.imshow(f"Welcome to Face Recognition", img)
+        try:
+            start_time = time.time()
+            while True:
+                ret, img = video_cap.read()
+                if ret:
+                    img = draw_boundary(img, faceCascade, 1.1, 10, (0, 255, 0), "Face", clf)
+                    elapsed_time = int(time.time() - start_time)
+                    remaining_time = max(0, 20 - elapsed_time)
+                    cv2.putText(img, f"Time Left: {remaining_time}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                                (255, 255, 255), 2)
+                    cv2.imshow(f"Welcome to Face Recognition", img)
 
-                if elapsed_time >= 20:  
-                    break
+                    if elapsed_time >= 20:
+                        break
 
-                key = cv2.waitKey(1)
-                if key == 13:  
-                    break
+                    key = cv2.waitKey(1)
+                    if key == 13:
+                        break
 
-        video_cap.release()
-        cv2.destroyAllWindows()
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}", parent=root)
+
+        finally:
+            if video_cap.isOpened():
+                video_cap.release()
+                cv2.destroyAllWindows()
+
     else:
         messagebox.showinfo("Select File", "Please select a file to take attendance!", parent=root)
+
 
 
 
