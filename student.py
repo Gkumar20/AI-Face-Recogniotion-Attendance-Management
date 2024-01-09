@@ -207,8 +207,8 @@ def Student(root):
     showAll_button.grid(row=0, column=5, padx=6, pady=5, sticky=W)
 
     # Binding the functions to the buttons
-    search_button.config(command=search_student)
-    showAll_button.config(command=show_all_students)
+    search_button.config(command=lambda:search_student(root))
+    showAll_button.config(command=lambda:show_all_students(root))
 
 
 
@@ -499,7 +499,7 @@ def generate_dataset(root):
             messagebox.showinfo("Error", f"Due To: {str(error)}", parent=root)
 
 # Function to search for a specific student
-def search_student():
+def search_student(root):
     search_by = search_combo.get()
     search_text = search_entry.get()
     try:
@@ -510,7 +510,7 @@ def search_student():
         elif search_by == "Roll No.":
             my_cursor.execute("SELECT * FROM student WHERE Roll=%s", (search_text,))
         else:
-            messagebox.showerror("Error", "Please select a valid search category.")
+            messagebox.showerror("Error", "Please select a valid search category.",parent=root)
             return
 
         data = my_cursor.fetchall()
@@ -519,13 +519,13 @@ def search_student():
             for row in data:
                 student_table.insert("", END, values=row)
         else:
-            messagebox.showinfo("Not Found", "No matching records found.")
+            messagebox.showinfo("Not Found", "No matching records found.",parent=root)
         conn.close()
     except Exception as error:
-        messagebox.showerror("Error", f"Search error: {str(error)}")
+        messagebox.showerror("Error", f"Search error: {str(error)}",parent=root)
 
 # Function to show all students
-def show_all_students():
+def show_all_students(root):
     try:
         conn = get_database_connection()
         my_cursor = conn.cursor()
@@ -536,10 +536,10 @@ def show_all_students():
             for row in data:
                 student_table.insert("", END, values=row)
         else:
-            messagebox.showinfo("Empty", "No records found.")
+            messagebox.showinfo("Empty", "No records found.",parent=root)
         conn.close()
     except Exception as error:
-        messagebox.showerror("Error", f"Error in fetching data: {str(error)}")
+        messagebox.showerror("Error", f"Error in fetching data: {str(error)}",parent=root)
 
 
 
