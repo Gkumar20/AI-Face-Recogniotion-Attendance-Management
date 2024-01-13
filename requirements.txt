@@ -1,0 +1,11 @@
+cx_Freeze==6.15.12
+cx_Freeze==6.15.12
+mysql_connector_repackaged==0.3.1
+numpy==1.26.3
+openai==0.28.0
+opencv_contrib_python==4.8.1.78
+opencv_python==4.8.1.78
+opencv_python_headless==4.8.1.78
+Pillow==10.0.1
+Pillow==10.2.0
+pywin32==306
