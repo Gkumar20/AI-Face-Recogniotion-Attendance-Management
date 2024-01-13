@@ -54,6 +54,11 @@ Install my-project with npm
   python main.py
 
 ```
+
+## Reuired Folder 
+make manuallly folder 
+- data
+- attendance_report
     
 ## Contributing
 
