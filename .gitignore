@@ -1,0 +1,4 @@
+
+# Ignore files and folder file
+__pycache__/
+build
