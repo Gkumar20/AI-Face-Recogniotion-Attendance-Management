@@ -18,7 +18,7 @@ includefiles = [
     "attendance_report",
     "classifier.xml",
     "haarcascade_frontalface_default.xml",
-    "student.sql"
+    "database"
 ]
 
 options = {
