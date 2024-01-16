@@ -106,6 +106,7 @@ git push origin feature/YourFeature
 
 1. Prof. D.K. Ray
 Role: Project Guide
+
 Description: Prof. D.K. Ray has provided guidance and mentorship for this project, offering expertise and insights into the field of [AI, Computer Vision].
 
 2. Ganesh Kumar
