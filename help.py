@@ -1,15 +1,23 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-import openai
 import configparser
+import requests
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-api_key = config.get('OpenAI', 'API_KEY')
-openai.api_key = api_key
-# client = OpenAI()
+rapid_api_key = config.get('RapidAPI', 'API_KEY')
+rapid_api_host = config.get('RapidAPI', 'HOST')
+
+url = "https://" + rapid_api_host + "/ask"
+
+headers = {
+    "content-type": "application/json",
+    "X-RapidAPI-Key": rapid_api_key,
+    "X-RapidAPI-Host": rapid_api_host
+}
+
 global root
 
 def Help(root):
@@ -58,20 +66,19 @@ def Help(root):
         process_text.insert(END, "1. Start the system.\n\n2. Register and Gather the Students Details\n\n3. Make Sure that the every student have their respective images.\n\n4. Train the Model.\n\n5. Start Recognition and Mark Attendance.\n\n6. Review attendance logs.")
         process_text.place(x=0,y=50)
 
-        # Chat frame
-    
 
-        chat_frame = LabelFrame(root, text='ChatBot To Improve Your Q&A', bd=2, bg="white", relief=RIDGE, font=("times new roman", 15,"bold"), fg="red")
+        # Chat frame
+        chat_frame = LabelFrame(root, text='Rapid API ChatBot To Improve Your Q&A', bd=2, bg="white", relief=RIDGE, font=("times new roman", 15, "bold"), fg="red")
         chat_frame.place(x=30, y=370, width=590, height=360)
 
         chat_log = Text(chat_frame, wrap=WORD, font=("Helvetica", 10), height=15, width=70)
         chat_log.pack(padx=10, pady=10)
 
-        user_input = Entry(chat_frame, width=50,fg="green")
+        user_input = Entry(chat_frame, width=50, fg="green")
         user_input.pack(pady=5)
         user_input.bind("<Return>", lambda event: send_message(user_input, chat_log, event))
 
-        send_button = Button(chat_frame, text="Send", command=lambda: send_message(user_input, chat_log),cursor="hand2", width=10, font=("times new roman", 12, "bold"), bg="black", fg="white")
+        send_button = Button(chat_frame, text="Send", command=lambda: send_message(user_input, chat_log), cursor="hand2", width=10, font=("times new roman", 12, "bold"), bg="black", fg="white")
         send_button.pack()
 
         
@@ -100,8 +107,8 @@ def Help(root):
         messagebox.showerror("Config Error", f"Error reading config.ini: {e}", parent=root)
     except FileNotFoundError as e:
         messagebox.showerror("File Not Found", f"File not found: {e}", parent=root)
-    except openai.OpenAIError as e:
-        messagebox.showerror("OpenAI Error", f"Error connecting to OpenAI: {e}", parent=root)
+    except requests.exceptions.RequestException as e:
+        messagebox.showerror("Rapid API Error", f"Error connecting to Rapid API: {e}", parent=root)
     except Exception as e:
         messagebox.showerror("Error", f"Error in Help function: {e}", parent=root)
 
@@ -110,26 +117,24 @@ def send_message(user_input, chat_log, event=None):
     try:
         message = user_input.get()
         chat_log.config(state=NORMAL)
-        chat_log.tag_config("user", foreground="blue")  
-        chat_log.tag_config("bot", foreground="red", background="yellow") 
+        chat_log.tag_config("user", foreground="blue")
+        chat_log.tag_config("bot", foreground="red", background="yellow")
 
         chat_log.insert(END, "You: " + message + "\n", "user")
-        
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=message,
-            max_tokens=150  
-        )
 
- 
-        
-        ai_reply = response.choices[0].text.strip()
+        payload = {
+            "query": message,
+            "wordLimit": "50"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        response_data = response.json()
+        ai_reply = response_data['response']
+
         chat_log.insert(END, "ChatBot: " + ai_reply + "\n", "bot")
         chat_log.config(state=DISABLED)
-        
+
         user_input.delete(0, END)
-    except openai.OpenAIError as e:
-        print( f"Error with OpenAI: {e}")
     except Exception as e:
         print(f"Error in send_message function: {e}")
 
