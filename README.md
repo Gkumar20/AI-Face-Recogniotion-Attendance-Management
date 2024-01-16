@@ -43,6 +43,8 @@ Exit Application: Closes the application.
 - tk86t.dll
 - train.py
 
+
+
 ## Installation
 
 Install my-project with npm
@@ -56,9 +58,24 @@ Install my-project with npm
 ```
 
 ## Reuired Folder 
-make manuallly folder 
+make manually folder 
 - data
 - attendance_report
+- config.ini should have 
+  
+  ```bash
+  [Database]
+  DB_HOST = localhost
+  DB_USER = root
+  DB_PASSWORD = root
+  DB_NAME = facerecognizer
+
+  [RapidAPI]
+  API_KEY = add your api key of rapid ai
+  HOST = chatgpt-gpt4-ai-chatbot.p.rapidapi.com
+
+  ```
+    
     
 ## Contributing
 
