@@ -5,8 +5,8 @@ This is a graphical interface for a face recognition-based attendance system usi
 
 
 ## Description
-
 The project utilizes Tkinter for GUI, PIL for image handling, and various modules for different functionalities such as student registration, training data, face detection, attendance reporting, and more.
+
 ## Usage
 This program offers several functionalities accessible via the graphical interface:
 
@@ -18,12 +18,12 @@ Student Photos: Accesses stored student images.
 Developers: Provides information about the developers.
 Help: Offers assistance and guidance.
 Exit Application: Closes the application.
+
 ## Directory Structure
 - attendance_report/
 - data/
 - database/
 - public/
-- __pycache__/
 - .gitignore
 - about.py
 - attendance.py
@@ -39,21 +39,18 @@ Exit Application: Closes the application.
 - setup.py
 - student.py
 - tcl86t.dll
-- tempCodeRunnerFile.py
 - tk86t.dll
 - train.py
 
 
 
 ## Installation
-
 Install my-project with npm
 
 ```bash
   git clone https://github.com/Gkumar20/Desktop_application.git
   cd Desktop_application
   pip install -r requirements.txt
-  python main.py
 
 ```
 
@@ -78,7 +75,6 @@ make manually folder
     
     
 ## Contributing
-
 Contributions to this project are welcomed and appreciated! You can contribute by:
 
 Reporting Bugs: If you encounter any bugs or issues, please create a detailed GitHub issue describing the problem.
@@ -106,7 +102,6 @@ git push origin feature/YourFeature
 
 
 ## Authors
-
 - [@octokatherine](https://www.github.com/octokatherine)
 
 1. Prof. D.K. Ray
